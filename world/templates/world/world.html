@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ title }} – {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div id="map"></div>
+{% endblock %}

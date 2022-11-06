@@ -1,0 +1,12 @@
+<nav class="navbar" style="background-color: #005CBB;">
+  <div class="container-fluid">
+    <a class="navbar-brand" style="color: #FED600" href="{% url 'world' %}">AWM 2023</a>
+    <form class="d-flex">
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="btn btn-warning ml-4">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
+        {% endif %}
+    </form>
+  </div>
+</nav>
