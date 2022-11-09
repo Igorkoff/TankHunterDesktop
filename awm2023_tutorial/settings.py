@@ -10,23 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+import socket
+import dj_database_url
+from decouple import config
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sdjt=#-8l3oor-e8kc03p$zdied0pe=^@uz__07yjq%j0n(+lm'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -79,28 +69,10 @@ WSGI_APPLICATION = 'awm2023_tutorial.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if os.environ.get('CONDA_PREFIX', '').startswith('/opt'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.postgis',
-            'NAME': 'gis',
-            'USER': 'docker',
-            'PASSWORD': 'docker',
-            'HOST': 'awm2023_database',
-            'PORT': 5432,
-        }
-    }
+if os.environ.get('CONDA_PREFIX','').startswith('/opt'):
+    DATABASES = {'default': config('DATABASE_DOCKER', default=None, cast=dj_database_url.parse)}
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.postgis',
-            'NAME': 'gis',
-            'USER': 'docker',
-            'PASSWORD': 'docker',
-            'HOST': 'localhost',
-            'PORT': 25432,
-        }
-    }
+    DATABASES = {'default': config('DATABASE_LOCAL', default=None, cast=dj_database_url.parse)}
 
 
 # Password validation
@@ -147,6 +119,30 @@ STATICFILES_DIRS = [
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+if socket.gethostname() == "MacBook":
+    DATABASES["default"]["HOST"] = "localhost"
+    DATABASES["default"]["PORT"] = 25432            # docker_config.POSTGIS_PORT
+else:
+    DATABASES["default"]["HOST"] = "wmap-postgis"   # f"{docker_config.PROJECT_NAME}-postgis"
+    DATABASES["default"]["PORT"] = 5432
+
+SECRET_KEY = config('SECRET_KEY', default=None)
+DEPLOY_SECURE = config('DEPLOY_SECURE', default=False, cast=bool)
+
+# Set DEPLOY_SECURE to True only for LIVE deployment
+if DEPLOY_SECURE:
+    DEBUG = False
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
+    CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', cast=lambda v: [s.strip() for s in v.split(',')])
+else:
+    DEBUG = True
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+    ALLOWED_HOSTS = []
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
