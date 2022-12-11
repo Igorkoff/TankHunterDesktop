@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load leaflet_tags %}
 {% load static %}
 
 {% block title %}
@@ -6,5 +7,75 @@
 {% endblock %}
 
 {% block content %}
-    <div class="box-element my-4" id="map"></div>
+    <div class="box-element my-4">
+        {% leaflet_map "military" callback="window.map_init" %}
+    </div>
+
+    <script type="text/javascript">
+        let geoJsonFile = '{% static 'data/ukraine_military_2.geojson' %}';
+
+        try {
+            map = L.map('military', {doubleClickZoom: false}).locate({setView: true, watch: true, maxZoom: 16});
+
+            let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+            osm.addTo(map);
+
+            fetch(geoJsonFile)
+
+                {#.then(res => res.json())#}
+                {#.then(data => console.log(data));#}
+
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    L.geoJSON(data, {
+                        onEachFeature: function (feature, layer) {
+                            layer.bindPopup(feature.properties.military.toString().toUpperCase());
+                        }
+                    }).addTo(map)
+                });
+
+            {% for report in reports %}
+                L.marker([{{ report.latitude }}, {{ report.longitude }}]).addTo(map).bindPopup('{{ report.vehicles }}');
+            {% endfor %}
+
+            map.on('locationfound', onLocationFound);
+
+            let gpsMarker = null;
+            let gpsCircleMarker;
+
+            function onLocationFound(e) {
+                let radius = e.accuracy / 2;
+                let popupContent = "You are within " + radius + " meters from this point";
+
+                if (gpsMarker == null) {
+                    gpsMarker = L.marker(e.latlng).addTo(map);
+                    gpsMarker.bindPopup(popupContent).openPopup();
+                    gpsCircleMarker = L.circle(e.latlng, radius).addTo(map);
+                } else {
+                    gpsMarker.getPopup().setContent(popupContent);
+                    gpsMarker.setLatLng(e.latlng);
+                    gpsCircleMarker.setLatLng(e.latlng);
+                    gpsCircleMarker.setRadius(radius);
+                }
+
+                let url = '/update_location/';
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({'latitude': e.latlng.lat, 'longitude': e.latlng.lng})
+                })
+                    .then((response) => {
+                        return response.json()
+                    })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    </script>
 {% endblock %}

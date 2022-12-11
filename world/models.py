@@ -121,6 +121,12 @@ class Report(models.Model):
     vehicles = models.CharField(verbose_name='Vehicles', max_length=35, blank=True)
     convoy = models.ForeignKey(Convoy, verbose_name='Convoy', on_delete=models.SET_NULL, null=True, blank=True)
 
+    def latitude(self):
+        return self.location.y
+
+    def longitude(self):
+        return self.location.x
+
     class Meta:
         verbose_name = 'Report'
         verbose_name_plural = 'Reports'

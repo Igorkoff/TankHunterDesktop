@@ -3,13 +3,15 @@ body {
     padding: 0;
 }
 
-#map {
-    height: 90vh;
-}
-
 nav, footer {
     color: #969696;
     background-color: #202A44;
+}
+
+/* Map */
+
+.leaflet-container {
+	height: 80vh;
 }
 
 /* Image Upload */
@@ -36,6 +38,7 @@ input[type="file"] {
 	letter-spacing: 2px;
 }
 
+/* Primary Buttons */
 
 .btn-change
 {
@@ -60,6 +63,7 @@ input[type="file"] {
   color: black;
 }
 
+/* Secondary Buttons */
 
 .btn-green {
     background-color: #7CB06D;
