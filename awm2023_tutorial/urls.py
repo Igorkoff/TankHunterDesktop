@@ -28,7 +28,9 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+handler404 = 'world.views.error_404_view'
+handler500 = 'world.views.error_500_view'
 
-admin.site.site_header = "Advanced Web Mapping"
-admin.site.site_title = "Advanced Web Mapping"
-admin.site.index_title = "Web Mapping Dashboard"
+admin.site.site_header = "Tank Hunter"
+admin.site.site_title = "Tank Hunter"
+admin.site.index_title = "Tank Hunter Dashboard"

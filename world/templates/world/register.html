@@ -1,14 +1,28 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
+{% block title %}
+    {{ title }} – {{ block.super }}
+{% endblock %}
+
+{% block heading %}
+    <div class="container">
+        <div class="row my-5 justify-content-center">
+            <h1 class="heading">Register</h1>
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
-    <div class="container-fluid mt-5">
         <div class="container box-element mb-5">
             <form method="POST" action="">
                 {% csrf_token %}
                 {{form|crispy}}
-                <button type="submit" class="btn btn-primary btn-block mt-3">Register</button>
+                <div class="d-flex justify-content-center">
+                    <div class="my-3">
+                        <button type="submit" class="btn btn-change">Register</button>
+                    </div>
+                </div>
             </form>
         </div>
-    </div>
 {% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{ title }} – {{ block.super }}
+{% endblock %}
+
+{% block heading %}
+    <div class="container">
+        <div class="row my-5 justify-content-center">
+            <h1 class="heading">Report the Enemy</h1>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+        <div class="container box-element mb-5">
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="d-flex justify-content-center">
+                    <div class="my-3">
+                        <label for="id_image" class="custom-file-upload">
+                            <img src="https://via.placeholder.com/400x225.png?text=Click+To+Upload+Image" id="preview" class="img-thumbnail">
+                        </label>
+                    </div>
+                </div>
+                {{form|crispy}}
+                <div class="d-flex justify-content-center">
+                    <div class="my-3">
+                        <button type="submit" class="btn btn-change">Submit Report</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+{% endblock %}

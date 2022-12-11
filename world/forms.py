@@ -1,12 +1,31 @@
-from django import forms
-from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, ReadOnlyPasswordHashField
+from django.contrib.auth import get_user_model
+from django.forms import ModelForm
+
+from world.models import Report
+from django import forms
 
 User = get_user_model()
 
 
+class UserReportForm(ModelForm):
+    class Meta:
+        model = Report
+        fields = ('image', 'comment', 'civilians')
+        labels = {
+            'image': 'Image',
+            'comment': 'Comment (Optional)',
+            'civilians': 'Civilian Presence in the Area?',
+        }
+        widgets = {
+            'image': forms.FileInput(attrs={'class': ''}),
+            'comment': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'civilians': forms.RadioSelect(attrs={'class': 'form-control'}),
+        }
+
+
 class UserLoginForm(AuthenticationForm):
-    username = forms.EmailField(label='E-Mail Address', widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    username = forms.EmailField(label='Email Address', widget=forms.EmailInput(attrs={'class': 'form-control'}))
     password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 

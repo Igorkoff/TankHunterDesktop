@@ -91,6 +91,45 @@ class User(AbstractBaseUser):
         return f'{self.last_name}, {self.first_name}'
 
 
+class Convoy(models.Model):
+    tracking = models.BooleanField(verbose_name='Tracking', default=False)
+    updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
+
+    class Meta:
+        verbose_name = 'Convoy'
+        verbose_name_plural = 'Convoys'
+        ordering = ['-tracking']
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Report(models.Model):
+    CHOICES = (
+        ('Yes', 'Yes, there are some civilians.'),
+        ('No', 'No, there are no civilians.'),
+        ('Unknown', 'I don\'t know'),
+    )
+
+    user = models.ForeignKey(User, verbose_name='User', editable=False, on_delete=models.SET_NULL, null=True, blank=True)
+    image = models.ImageField(verbose_name='Image', upload_to='photos/%Y/%m/%d/', null=True, blank=True)
+    comment = models.TextField(verbose_name='Comment', blank=True)
+    civilians = models.CharField(verbose_name='Civilians', choices=CHOICES, default='Unknown', max_length=35, blank=False)
+    location = models.PointField(verbose_name='Location', srid=4326, null=True, blank=True)
+    time = models.DateTimeField(verbose_name='Time', auto_now_add=True)
+    verified = models.BooleanField(verbose_name='Verified', default=False)
+    vehicles = models.CharField(verbose_name='Vehicles', max_length=35, blank=True)
+    convoy = models.ForeignKey(Convoy, verbose_name='Convoy', on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Report'
+        verbose_name_plural = 'Reports'
+        ordering = ['-verified']
+
+    def __str__(self):
+        return str(self.id)
+
+
 class WorldBorder(models.Model):
     name = models.CharField(max_length=50)
     area = models.IntegerField()
