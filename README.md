@@ -2,7 +2,7 @@
 
 This project is a primitive version of **Delta** situational awareness system used by **Armed Forces of Ukraine** that allows creating reports regarding enemy armoured fighting vehicles movements, managing them and viewing information on military objects in Ukraine. This project is also a part of [Tank Hunter](https://github.com/Igorkoff/TankHunter).
 
-We used **Django** for **Python** to create Back-End for this project, **HTML, CSS, Leaflet.JS and **Bootstrap** were used for mapping functionalities. Data is being stored in a relational **PostgreSQL** database in a **Docker** container.
+We used **Django** for **Python** to create Back-End for this project, **HTML, CSS, Leaflet.JS** and **Bootstrap** were used for Front-End alognside some web mapping functionalities. Data is being stored in a relational **PostgreSQL** database in a **Docker** container.
 
 *Note: this is a very early version, so certain features have not been fully implemented yet and some parts might not work as expected.* 
 
